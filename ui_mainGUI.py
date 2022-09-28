@@ -7,12 +7,11 @@
 
 from PyQt6 import QtCore, QtGui, QtWidgets
 from PyQt6.QtCore import QPropertyAnimation
-import mysql.connector as dbms
+import mysql.connector
 
 
 class Ui_MainWindow(object):
-    connector = dbms.connect()
-    cursor = connector.cursor()
+
 
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
@@ -602,6 +601,11 @@ class Ui_MainWindow(object):
         self.btn_search.clicked.connect(lambda: self.stackedWidget.setCurrentWidget(self.search_page))
         self.btn_sell.clicked.connect(lambda: self.stackedWidget.setCurrentWidget(self.sell_page))
 
+        #   functionality section
+        self.btn_addpage_addItems.clicked.connect(lambda: self.addpage_addItems_clicked())
+        self.btn_addpage_nextItem.clicked.connect(lambda: self.addpage_nextItem_clicked())
+        self.btn_addpage_clear.clicked.connect(lambda: self.addpage_clear_clicked())
+
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "Argosy - Manager"))
@@ -679,6 +683,66 @@ class Ui_MainWindow(object):
                 self.btn_sell.setText("")
                 self.btn_sell.setIcon(QtGui.QIcon('images/icons8-minus-64.png'))
 
+    # FUNCTIONALITY PART
+
+    add_page_buffer_list = list()
+
+
+
+    def addpage_nextItem_clicked(self):
+        # getting the values
+        itemName = self.textEdit_addpage_name.toPlainText()
+        quantity = self.textEdit_addpage_qty.toPlainText()
+        price = self.textEdit_addpage_price.toPlainText()
+        location = self.textEdit_addpage_storage.toPlainText()
+        n = self.textEdit_addpage_diplay.toPlainText()
+
+        # clearing everything but display
+
+        self.textEdit_addpage_name.setText("")
+        self.textEdit_addpage_price.setText("")
+        self.textEdit_addpage_qty.setText("")
+        self.textEdit_addpage_storage.setText("")
+
+        if len(itemName) > 49 or len(location) > 4:
+            self.textEdit_addpage_name.setText("!enter smaller value!")
+            self.textEdit_addpage_storage.setText("!enter smaller value!")
+            return
+
+        try:
+            self.add_page_buffer_list.append([itemName,int(quantity),int(price),location])
+        except Exception:
+            self.textEdit_addpage_price.setText("!enter integer value!")
+            self.textEdit_addpage_qty.setText("!enter integer value!")
+            return
+
+        n = itemName + " " + quantity + " " + price + " " + location + "\n" + n
+        self.textEdit_addpage_diplay.setText(n)
+
+    def addpage_clear_clicked(self):
+        self.textEdit_addpage_name.setText("")
+        self.textEdit_addpage_qty.setText("")
+        self.textEdit_addpage_price.setText("")
+        self.textEdit_addpage_storage.setText("")
+        self.textEdit_addpage_diplay.setText("")
+        self.add_page_buffer_list.clear()
+
+
+    def addpage_addItems_clicked(self):
+        print("clicked")
+        try:
+            connector = mysql.connector.connect(host="localhost", user="dhruv", password="DGupta@585", database="argosy")
+            cur = connector.cursor()
+        except Exception:
+            print("failed to connect!")
+
+        try:
+            for i in self.add_page_buffer_list:
+                cur.execute('''insert into shop_storage(Item_Name, Quantity, Price, Location) 
+                value ("{}",{},{},"{}")'''.format(i[0], i[1], i[2], i[3]))
+                connector.commit()
+        except Exception:
+            print("dump failed")
 
 if __name__ == "__main__":
     import sys
