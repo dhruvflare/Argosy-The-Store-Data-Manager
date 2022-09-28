@@ -1,0 +1,86 @@
+self.btn_toggle.clicked.connect(lambda: self.toggle_clicked(140, True))
+
+#     Pages Management
+        self.btn_add.clicked.connect(lambda: self.stackedWidget.setCurrentWidget(self.add_page))
+        self.btn_search.clicked.connect(lambda: self.stackedWidget.setCurrentWidget(self.search_page))
+        self.btn_sell.clicked.connect(lambda: self.stackedWidget.setCurrentWidget(self.sell_page))
+
+
+
+
+        def retranslateUi(self, MainWindow):
+        _translate = QtCore.QCoreApplication.translate
+        MainWindow.setWindowTitle(_translate("MainWindow", "Argosy - Manager"))
+        self.btn_toggle.setText(_translate("MainWindow", "Menu"))
+
+        self.btn_add.setText(_translate("MainWindow", ""))
+        self.btn_add.setIcon(QtGui.QIcon('images/icons8-plus-64.png'))
+
+        self.btn_search.setText(_translate("MainWindow", ""))
+        self.btn_search.setIcon(QtGui.QIcon('images/icons8-search-64.png'))
+
+        self.btn_sell.setText(_translate("MainWindow", ""))
+        self.btn_sell.setIcon(QtGui.QIcon('images/icons8-minus-64.png'))
+
+        self.label_addpage_title.setText(_translate("MainWindow", "Add Items To Storage"))
+        self.label_addpage_name.setText(_translate("MainWindow", "Item Name :"))
+        self.label_addpage_qty.setText(_translate("MainWindow", "Quantity :"))
+        self.label_addpage_price.setText(_translate("MainWindow", "Price :"))
+        self.label_addpage_strg.setText(_translate("MainWindow", "Storage Location :"))
+        self.btn_addpage_nextItem.setText(_translate("MainWindow", "Next Item"))
+        self.btn_addpage_addItems.setText(_translate("MainWindow", "Add Items"))
+        self.btn_addpage_clear.setText(_translate("MainWindow", "Clear"))
+        self.label_6.setText(_translate("MainWindow", "Search Items From Storage"))
+        self.label_7.setText(_translate("MainWindow", "Item Name :"))
+        self.btn_searchpage_searchItem.setText(_translate("MainWindow", "Search Item"))
+        self.label_10.setText(_translate("MainWindow", "Sell Items From Storage"))
+        self.label_8.setText(_translate("MainWindow", "Item Name :"))
+        self.label_9.setText(_translate("MainWindow", "Quantity :"))
+        self.pushButton_5.setText(_translate("MainWindow", "Next Item"))
+        self.label_11.setText(_translate("MainWindow", "Total Amount :"))
+        self.btn_sellpage_sellItems.setText(_translate("MainWindow", "Sell/Remove Items"))
+        self.btn_sellpage_clear.setText(_translate("MainWindow", "Clear"))
+
+    def toggle_clicked(self, maxWidth, enable):
+        if enable:
+
+            # GET WIDTH
+            wid = self.frame_left_menu.width()
+            maxExtend = maxWidth
+            standard = 70
+
+            # Set Max Width
+            if wid == standard:
+                widthExtend = maxExtend
+                self.btn_add.setText("Add To Storage")
+                self.btn_search.setText("Search Storage")
+                self.btn_sell.setText("Sell/Remove Item")
+
+            else:
+                widthExtend = standard
+                self.btn_add.setText("")
+                self.btn_search.setIcon(QtGui.QIcon('images/icons8-search-64.png'))
+                self.btn_search.setText("")
+                self.btn_search.setIcon(QtGui.QIcon('images/icons8-search-64.png'))
+                self.btn_sell.setText("")
+                self.btn_sell.setIcon(QtGui.QIcon('images/icons8-minus-64.png'))
+
+            # animation
+            self.animation = QPropertyAnimation(self.frame_left_menu, b"minimumWidth")
+            self.animation.setDuration(400)
+            self.animation.setStartValue(wid)
+            self.animation.setEndValue(widthExtend)
+            self.animation.start()
+
+            if wid == standard:
+                self.btn_add.setText("Add To Storage")
+                self.btn_search.setText("Search Storage")
+                self.btn_sell.setText("Sell/Remove Item")
+
+            else:
+                self.btn_add.setText("")
+                self.btn_search.setIcon(QtGui.QIcon('images/icons8-search-64.png'))
+                self.btn_search.setText("")
+                self.btn_search.setIcon(QtGui.QIcon('images/icons8-search-64.png'))
+                self.btn_sell.setText("")
+                self.btn_sell.setIcon(QtGui.QIcon('images/icons8-minus-64.png'))
