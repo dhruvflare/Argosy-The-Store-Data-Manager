@@ -596,15 +596,17 @@ class Ui_MainWindow(object):
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         self.btn_toggle.clicked.connect(lambda: self.toggle_clicked(140, True))
 
-        #     Pages Management
+        #     Pages Management +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         self.btn_add.clicked.connect(lambda: self.stackedWidget.setCurrentWidget(self.add_page))
         self.btn_search.clicked.connect(lambda: self.stackedWidget.setCurrentWidget(self.search_page))
         self.btn_sell.clicked.connect(lambda: self.stackedWidget.setCurrentWidget(self.sell_page))
 
-        #   functionality section
+        #   functionality section ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         self.btn_addpage_addItems.clicked.connect(lambda: self.addpage_addItems_clicked())
         self.btn_addpage_nextItem.clicked.connect(lambda: self.addpage_nextItem_clicked())
         self.btn_addpage_clear.clicked.connect(lambda: self.addpage_clear_clicked())
+
+        self.btn_searchpage_searchItem.clicked.connect(lambda: self.searchpage_searchItem())
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
@@ -685,6 +687,8 @@ class Ui_MainWindow(object):
 
     # FUNCTIONALITY PART
 
+    # ADD PAGE
+
     add_page_buffer_list = list()
 
 
@@ -729,9 +733,10 @@ class Ui_MainWindow(object):
 
 
     def addpage_addItems_clicked(self):
-        print("clicked")
+        self.textEdit_addpage_diplay.setText("")
         try:
-            connector = mysql.connector.connect(host="localhost", user="dhruv", password="DGupta@585", database="argosy")
+            connector = mysql.connector.connect(host="localhost", user="dhruv", password="DGupta@585",
+                                                database="argosy")
             cur = connector.cursor()
         except Exception:
             print("failed to connect!")
@@ -743,6 +748,38 @@ class Ui_MainWindow(object):
                 connector.commit()
         except Exception:
             print("dump failed")
+
+    # SEARCH PAGE
+
+    def searchpage_searchItem(self):
+        itemName = self.textEdit_searchpage_name.toPlainText()
+        try:
+            connector = mysql.connector.connect(host="localhost", user="dhruv", password="DGupta@585",
+                                                database="argosy")
+            cur = connector.cursor()
+        except Exception:
+            print("failed to connect!")
+
+        try:
+            cur.execute('''select Item_Name, Quantity, Price, Location from shop_storage
+            where item_Name = "{}"'''.format(itemName))
+
+            rows = cur.fetchall()
+            if len(rows) == 0:
+                self.textEdit_searchpage_display.setText("No Such Product Found")
+
+            elif len(rows) >= 0:
+                self.textEdit_searchpage_display.setText("Name Qty Price Location")
+                for i in rows:
+                    n = self.textEdit_searchpage_display.toPlainText()
+                    n = n + "\n" + i[0] + " " + str(i [1]) + " " + str(i[2]) + " " + i[3] + "\n"
+                    self.textEdit_searchpage_display.setText(n)
+
+        except Exception:
+            print("failed here at searchpage")
+
+
+
 
 if __name__ == "__main__":
     import sys
