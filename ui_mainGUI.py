@@ -610,6 +610,7 @@ class Ui_MainWindow(object):
 
         self.btn_sellpage_nextItem.clicked.connect(lambda: self.sellpage_nextItem_clicked())
         self.btn_sellpage_clear.clicked.connect(lambda: self.sellpage_clear_clicked())
+        self.btn_sellpage_sellItems.clicked.connect(lambda: self.sellpage_sellItems_clicked())
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
@@ -845,11 +846,22 @@ class Ui_MainWindow(object):
         except Exception:
             print(n)
 
+        x = 0
+        for i in self.sell_page_buffer_list:
+            x += i[2] * i[1]
+        self.textEdit_sellpage_total.setText(str(x))
+
+
     def sellpage_clear_clicked(self):
         self.textEdit_sellpage_name.setText("")
         self.textEdit_sellpage_qty.setText("")
         self.textEdit_sellpage_display.setText("")
+        self.textEdit_sellpage_total.setText("")
         self.sell_page_buffer_list.clear()
+
+    def sellpage_sellItems_clicked(self):
+        pass
+
 
 
 
