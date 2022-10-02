@@ -483,15 +483,15 @@ class Ui_MainWindow(object):
                                                  "font-size: 30px;")
         self.textEdit_sellpage_qty.setObjectName("textEdit_sellpage_qty")
         self.horizontalLayout_6.addWidget(self.textEdit_sellpage_qty)
-        self.pushButton_5 = QtWidgets.QPushButton(self.frame_4)
-        self.pushButton_5.setMinimumSize(QtCore.QSize(100, 50))
-        self.pushButton_5.setMaximumSize(QtCore.QSize(100, 16777215))
+        self.btn_sellpage_nextItem = QtWidgets.QPushButton(self.frame_4)
+        self.btn_sellpage_nextItem.setMinimumSize(QtCore.QSize(100, 50))
+        self.btn_sellpage_nextItem.setMaximumSize(QtCore.QSize(100, 16777215))
         font = QtGui.QFont()
         font.setPointSize(11)
         font.setBold(True)
         font.setItalic(True)
-        self.pushButton_5.setFont(font)
-        self.pushButton_5.setStyleSheet("QPushButton{\n"
+        self.btn_sellpage_nextItem.setFont(font)
+        self.btn_sellpage_nextItem.setStyleSheet("QPushButton{\n"
                                         "    \n"
                                         "    background-color: rgb(45, 45, 45);\n"
                                         "    color: rgb(255, 255, 255);\n"
@@ -502,8 +502,8 @@ class Ui_MainWindow(object):
                                         "    \n"
                                         "    background-color: rgb(131, 255, 199);\n"
                                         "}")
-        self.pushButton_5.setObjectName("pushButton_5")
-        self.horizontalLayout_6.addWidget(self.pushButton_5)
+        self.btn_sellpage_nextItem.setObjectName("btn_sellpage_nextItem")
+        self.horizontalLayout_6.addWidget(self.btn_sellpage_nextItem)
         self.verticalLayout_8.addWidget(self.frame_4)
         self.textEdit_sellpage_display = QtWidgets.QTextEdit(self.sell_page)
         font = QtGui.QFont()
@@ -608,6 +608,8 @@ class Ui_MainWindow(object):
 
         self.btn_searchpage_searchItem.clicked.connect(lambda: self.searchpage_searchItem())
 
+        self.btn_sellpage_nextItem.clicked.connect(lambda: self.sellpage_nextItem_clicked())
+
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "Argosy - Manager"))
@@ -636,7 +638,7 @@ class Ui_MainWindow(object):
         self.label_10.setText(_translate("MainWindow", "Sell Items From Storage"))
         self.label_8.setText(_translate("MainWindow", "Item Name :"))
         self.label_9.setText(_translate("MainWindow", "Quantity :"))
-        self.pushButton_5.setText(_translate("MainWindow", "Next Item"))
+        self.btn_sellpage_nextItem.setText(_translate("MainWindow", "Next Item"))
         self.label_11.setText(_translate("MainWindow", "Total Amount :"))
         self.btn_sellpage_sellItems.setText(_translate("MainWindow", "Sell/Remove Items"))
         self.btn_sellpage_clear.setText(_translate("MainWindow", "Clear"))
@@ -777,6 +779,76 @@ class Ui_MainWindow(object):
 
         except Exception:
             print("failed here at searchpage")
+
+    # Sell\Remove PAGE
+
+    sell_page_buffer_list = list()
+
+    def sellpage_nextItem_clicked(self):
+        # getting the values
+        itemName = self.textEdit_sellpage_name.toPlainText().strip()
+        quantity = self.textEdit_sellpage_qty.toPlainText().strip()
+        n = self.textEdit_sellpage_display.toPlainText()
+
+        # checks item existance
+        try:
+            connector = mysql.connector.connect(host="localhost", user="dhruv", password="DGupta@585",
+                                                database="argosy")
+            cur = connector.cursor()
+        except Exception:
+            print("failed to connect!")
+
+        try:
+            cur.execute('''select Item_Name, Quantity, Price, Location from shop_storage
+            where item_Name = "{}"'''.format(itemName))
+
+            rows = list(cur.fetchall())
+
+
+            if len(rows) == 0:
+                self.textEdit_sellpage_name.setText("No Such Product Found")
+                return
+
+            if rows[0][1] < int(quantity):
+                print("ok")
+                self.textEdit_sellpage_qty.setText("Lower Quantity in Storage")
+                return
+
+            for i in self.sell_page_buffer_list:
+                if i[0] == rows[0][0]:
+                    self.textEdit_sellpage_name.setText("Product Already Selected")
+                    return
+
+            price = rows[0][2]
+
+        except Exception:
+            print("failed here at sellpage")
+
+
+        # clearing everything but display
+
+        self.textEdit_sellpage_name.setText("")
+        self.textEdit_sellpage_qty.setText("")
+
+        try:
+            self.sell_page_buffer_list.append([rows[0][0], int(quantity), int(price)])
+        except Exception:
+            self.textEdit_sellpage_qty.setText("!enter integer value!")
+            return
+
+
+        n = itemName + " " + str(quantity) + " " + str(price) + "\n" + n
+
+        try:
+            self.textEdit_sellpage_display.setText(n)
+        except Exception:
+            print(n)
+
+
+
+
+
+
 
 
 
