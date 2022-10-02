@@ -772,7 +772,7 @@ class Ui_MainWindow(object):
                 self.textEdit_searchpage_display.setText("Name Qty Price Location")
                 for i in rows:
                     n = self.textEdit_searchpage_display.toPlainText()
-                    n = n + "\n" + i[0] + " " + str(i [1]) + " " + str(i[2]) + " " + i[3] + "\n"
+                    n = n + "\n" + "'" +i [0] + "'" + " " + str(i [1]) + " " + str(i[2]) + " " + i[3] + "\n"
                     self.textEdit_searchpage_display.setText(n)
 
         except Exception:
