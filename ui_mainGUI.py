@@ -873,7 +873,8 @@ class Ui_MainWindow(object):
 
             if int(qval[0]) > i[1]:
                 cur.execute(
-                    '''update shop_storage set Quantity = Quantity - {} where Item_Name = "{}"'''.format(str(i[1]), i[0]))
+                    '''update shop_storage set Quantity = Quantity - {} where Item_Name = "{}"'''.format(str(i[1]),
+                                                                                                         i[0]))
             elif int(qval[0]) == i[1]:
                 cur.execute('delete from shop_storage where Item_Name = "{}"'.format(i[0]))
             else:
